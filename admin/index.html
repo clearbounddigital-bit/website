@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Clearbound Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:   #0B0F1A;
+  --navy1:  #111827;
+  --navy2:  #1a2235;
+  --cream:  #EDE8DE;
+  --cream2: #D4CEC4;
+  --white:  #F8F6F2;
+  --dim:    rgba(237,232,222,0.45);
+  --dimmer: rgba(237,232,222,0.2);
+  --green:  #4ade80;
+  --red:    #f87171;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { background: var(--navy); color: var(--cream); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+a { color: inherit; }
+
+/* ── AUTH GATE ── */
+#auth-gate {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--navy);
+  z-index: 999;
+}
+#auth-box {
+  width: 100%; max-width: 360px;
+  background: var(--navy1);
+  border: 1px solid rgba(237,232,222,.08);
+  padding: 44px 40px;
+}
+.auth-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 1.1rem; letter-spacing: .04em;
+  color: var(--white); margin-bottom: 6px;
+}
+.auth-sub {
+  font-size: .78rem; color: var(--dimmer);
+  margin-bottom: 32px;
+}
+#auth-password {
+  width: 100%; background: rgba(237,232,222,.04);
+  border: 1px solid rgba(237,232,222,.12);
+  color: var(--cream); font-family: 'DM Sans', sans-serif;
+  font-size: .9rem; padding: 13px 16px; outline: none;
+  margin-bottom: 12px; transition: border-color .2s;
+}
+#auth-password:focus { border-color: rgba(237,232,222,.35); }
+#auth-btn {
+  width: 100%; background: var(--cream); color: var(--navy);
+  border: none; padding: 14px;
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: .68rem; letter-spacing: .12em; text-transform: uppercase;
+  cursor: pointer; transition: background .2s;
+}
+#auth-btn:hover { background: var(--white); }
+#auth-error {
+  font-size: .78rem; color: var(--red);
+  margin-top: 10px; display: none;
+}
+
+/* ── ADMIN SHELL ── */
+#admin-shell { display: none; min-height: 100vh; flex-direction: column; }
+#admin-shell.visible { display: flex; }
+
+.admin-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 40px;
+  background: rgba(11,15,26,.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(237,232,222,.07);
+  position: sticky; top: 0; z-index: 50;
+}
+.admin-logo {
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem;
+  letter-spacing: .04em; color: var(--white);
+}
+.admin-logo span { color: var(--dimmer); font-weight: 400; }
+.admin-logout {
+  font-family: 'Syne', sans-serif; font-size: .6rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--dimmer); background: none; border: none; cursor: pointer;
+  transition: color .2s;
+}
+.admin-logout:hover { color: var(--cream); }
+
+.admin-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 0;
+  align-items: start;
+}
+
+/* ── LEFT SIDEBAR: Add slot + Slot list ── */
+.admin-sidebar {
+  border-right: 1px solid rgba(237,232,222,.07);
+  padding: 36px 32px;
+  position: sticky; top: 64px;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+.admin-section-title {
+  font-family: 'Syne', sans-serif; font-size: .48rem; font-weight: 600;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--dimmer); margin-bottom: 20px;
+  padding-bottom: 12px; border-bottom: 1px solid rgba(237,232,222,.07);
+}
+
+.add-slot-form { margin-bottom: 36px; }
+.field-label {
+  font-family: 'Syne', sans-serif; font-size: .46rem; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--dimmer); display: block; margin-bottom: 8px;
+}
+.admin-input {
+  width: 100%; background: rgba(237,232,222,.04);
+  border: 1px solid rgba(237,232,222,.1);
+  color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: .86rem;
+  padding: 11px 14px; outline: none; margin-bottom: 14px;
+  transition: border-color .2s; -webkit-appearance: none; appearance: none;
+}
+.admin-input:focus { border-color: rgba(237,232,222,.35); }
+.admin-input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(.5); cursor: pointer; }
+
+.btn-add {
+  width: 100%; background: var(--cream); color: var(--navy);
+  border: none; padding: 12px;
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: .66rem; letter-spacing: .1em; text-transform: uppercase;
+  cursor: pointer; transition: background .2s;
+}
+.btn-add:hover { background: var(--white); }
+.btn-add:disabled { opacity: .5; cursor: not-allowed; }
+
+.add-feedback {
+  font-size: .78rem; margin-top: 10px; display: none;
+}
+.add-feedback.ok { color: var(--green); display: block; }
+.add-feedback.err { color: var(--red); display: block; }
+
+/* Slot list */
+#slots-list { display: flex; flex-direction: column; gap: 8px; }
+.slot-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(237,232,222,.07);
+  background: var(--navy);
+}
+.slot-row.booked { opacity: .55; }
+.slot-time {
+  font-family: 'Syne', sans-serif; font-size: .7rem;
+  font-weight: 600; color: var(--cream);
+}
+.slot-status {
+  font-family: 'Syne', sans-serif; font-size: .46rem;
+  font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  padding: 4px 8px;
+}
+.slot-status.available { color: var(--green); border: 1px solid rgba(74,222,128,.3); }
+.slot-status.booked-lbl { color: var(--red); border: 1px solid rgba(248,113,113,.3); }
+
+.btn-delete {
+  background: none; border: 1px solid rgba(237,232,222,.1);
+  color: var(--dimmer); font-family: 'Syne', sans-serif;
+  font-size: .46rem; letter-spacing: .1em; text-transform: uppercase;
+  padding: 5px 10px; cursor: pointer; transition: all .2s; flex-shrink: 0;
+}
+.btn-delete:hover { border-color: var(--red); color: var(--red); }
+
+.slots-empty-msg {
+  font-size: .82rem; color: var(--dimmer);
+  font-weight: 300; padding: 12px 0;
+}
+
+/* ── MAIN AREA: Bookings ── */
+.admin-main { padding: 36px 40px; }
+
+.bookings-count {
+  font-family: 'Syne', sans-serif; font-size: .48rem; font-weight: 500;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--dimmer);
+  margin-bottom: 20px;
+}
+
+.bookings-table-wrap { overflow-x: auto; }
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: .82rem; min-width: 700px;
+}
+thead th {
+  font-family: 'Syne', sans-serif; font-size: .44rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--dimmer); padding: 10px 14px;
+  border-bottom: 1px solid rgba(237,232,222,.08);
+  text-align: left; white-space: nowrap;
+}
+tbody td {
+  padding: 14px; border-bottom: 1px solid rgba(237,232,222,.05);
+  color: var(--dim); vertical-align: top;
+  font-weight: 300; line-height: 1.5;
+}
+tbody tr:hover td { background: rgba(237,232,222,.02); }
+tbody td:first-child { color: var(--cream); font-weight: 400; }
+.td-needs { max-width: 260px; }
+.td-slot { white-space: nowrap; font-family: 'Syne', sans-serif; font-size: .72rem; color: var(--cream2); }
+.no-bookings { padding: 28px 0; font-size: .88rem; color: var(--dimmer); font-weight: 300; }
+
+/* ── LOADER ── */
+.loading-row td {
+  color: var(--dimmer);
+  font-family: 'Syne', sans-serif; font-size: .5rem;
+  letter-spacing: .1em; text-transform: uppercase;
+}
+
+/* ── MISC ── */
+.dot-green { color: var(--green); }
+.dot-red   { color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- AUTH GATE -->
+<div id="auth-gate">
+  <div id="auth-box">
+    <div class="auth-logo">Clearbound<span> / Admin</span></div>
+    <p class="auth-sub">Enter your admin password to continue.</p>
+    <input type="password" id="auth-password" placeholder="Password" autocomplete="current-password">
+    <button id="auth-btn">Unlock →</button>
+    <p id="auth-error">Incorrect password. Try again.</p>
+  </div>
+</div>
+
+<!-- ADMIN SHELL -->
+<div id="admin-shell">
+  <header class="admin-header">
+    <span class="admin-logo">Clearbound<span> / Admin</span></span>
+    <button class="admin-logout" id="logout-btn">Log Out</button>
+  </header>
+
+  <div class="admin-body">
+    <!-- LEFT: Add Slot + Slot List -->
+    <aside class="admin-sidebar">
+      <!-- Add Slot -->
+      <p class="admin-section-title">Add Availability Slot</p>
+      <div class="add-slot-form">
+        <label class="field-label" for="slot-datetime">Date &amp; Time (your local time → stored as MST)</label>
+        <input type="datetime-local" class="admin-input" id="slot-datetime">
+        <button class="btn-add" id="add-slot-btn">+ Add Slot</button>
+        <p class="add-feedback" id="add-feedback"></p>
+      </div>
+
+      <!-- Slot List -->
+      <p class="admin-section-title">All Upcoming Slots</p>
+      <div id="slots-list">
+        <p class="slots-empty-msg">Loading…</p>
+      </div>
+    </aside>
+
+    <!-- RIGHT: Bookings Table -->
+    <main class="admin-main">
+      <p class="admin-section-title" style="margin-bottom:8px;">All Bookings</p>
+      <p class="bookings-count" id="bookings-count"></p>
+      <div class="bookings-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Industry</th>
+              <th>What They Need</th>
+              <th>Booked Slot</th>
+              <th>Received</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-body">
+            <tr class="loading-row"><td colspan="7">Loading bookings…</td></tr>
+          </tbody>
+        </table>
+        <p class="no-bookings" id="no-bookings" hidden>No bookings yet.</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+/* ══════════════════════════════════════════
+   CONFIG — replace with your actual key
+══════════════════════════════════════════ */
+const SUPABASE_URL = 'https://fcpzzyixxzuhytqvnngi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjcHp6eWl4eHp1aHl0cXZubmdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzQ4NzIsImV4cCI6MjA4OTk1MDg3Mn0.SSXCNw0QTePrxFvuwNodHznlW0-E-tm_LRoRIuAyw_o';
+
+/* ══════════════════════════════════════════
+   ADMIN PASSWORD
+   Change this to whatever you want.
+══════════════════════════════════════════ */
+const ADMIN_PASSWORD = 'clearbound2026'; // ← change this
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ── Auth gate ───────────────────────────
+const authGate  = document.getElementById('auth-gate');
+const adminShell = document.getElementById('admin-shell');
+
+function unlock() {
+  authGate.style.display = 'none';
+  adminShell.classList.add('visible');
+  sessionStorage.setItem('cb_admin', '1');
+  init();
+}
+
+if (sessionStorage.getItem('cb_admin') === '1') {
+  unlock();
+} else {
+  document.getElementById('auth-btn').addEventListener('click', () => {
+    const val = document.getElementById('auth-password').value;
+    if (val === ADMIN_PASSWORD) {
+      unlock();
+    } else {
+      document.getElementById('auth-error').style.display = 'block';
+      document.getElementById('auth-password').value = '';
+    }
+  });
+  document.getElementById('auth-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('auth-btn').click();
+  });
+}
+
+document.getElementById('logout-btn').addEventListener('click', () => {
+  sessionStorage.removeItem('cb_admin');
+  location.reload();
+});
+
+/* ══════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════ */
+const toMST = iso => new Date(iso).toLocaleString('en-US', {
+  timeZone: 'America/Phoenix',
+  weekday: 'short', month: 'short', day: 'numeric',
+  year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true
+}) + ' MST';
+
+const toMSTShort = iso => new Date(iso).toLocaleString('en-US', {
+  timeZone: 'America/Phoenix',
+  month: 'short', day: 'numeric',
+  hour: 'numeric', minute: '2-digit', hour12: true
+});
+
+/* ══════════════════════════════════════════
+   MAIN INIT
+══════════════════════════════════════════ */
+async function init() {
+  await Promise.all([loadSlots(), loadBookings()]);
+}
+
+/* ── SLOTS ────────────────────────────── */
+async function loadSlots() {
+  const slotsList = document.getElementById('slots-list');
+  slotsList.innerHTML = '<p class="slots-empty-msg">Loading…</p>';
+
+  const { data, error } = await sb
+    .from('availability_slots')
+    .select('id, slot_datetime, is_booked')
+    .gte('slot_datetime', new Date(Date.now() - 86400000).toISOString()) // show last 24h too
+    .order('slot_datetime', { ascending: true });
+
+  if (error) {
+    slotsList.innerHTML = `<p class="slots-empty-msg" style="color:var(--red)">Error loading slots: ${error.message}</p>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    slotsList.innerHTML = '<p class="slots-empty-msg">No slots yet. Add one above.</p>';
+    return;
+  }
+
+  slotsList.innerHTML = '';
+  data.forEach(slot => {
+    const row = document.createElement('div');
+    row.className = 'slot-row' + (slot.is_booked ? ' booked' : '');
+    row.innerHTML = `
+      <span class="slot-time">${toMST(slot.slot_datetime)}</span>
+      <span class="slot-status ${slot.is_booked ? 'booked-lbl' : 'available'}">${slot.is_booked ? 'Booked' : 'Available'}</span>
+      <button class="btn-delete" data-id="${slot.id}" data-booked="${slot.is_booked}">Delete</button>
+    `;
+    row.querySelector('.btn-delete').addEventListener('click', () => deleteSlot(slot.id, slot.is_booked));
+    slotsList.appendChild(row);
+  });
+}
+
+async function deleteSlot(id, isBooked) {
+  const msg = isBooked
+    ? 'This slot has a booking. Deleting it will NOT cancel the booking record. Continue?'
+    : 'Delete this slot?';
+  if (!confirm(msg)) return;
+
+  const { error } = await sb.from('availability_slots').delete().eq('id', id);
+  if (error) { alert('Error deleting slot: ' + error.message); return; }
+  await loadSlots();
+}
+
+/* ── ADD SLOT ────────────────────────── */
+document.getElementById('add-slot-btn').addEventListener('click', async () => {
+  const dtInput = document.getElementById('slot-datetime').value;
+  const fb = document.getElementById('add-feedback');
+  fb.className = 'add-feedback';
+  fb.style.display = 'none';
+
+  if (!dtInput) {
+    fb.textContent = 'Please select a date and time.';
+    fb.className = 'add-feedback err';
+    return;
+  }
+
+  // datetime-local gives us a local time string — we treat it as Phoenix/MST (UTC-7)
+  // Append -07:00 to force MST interpretation
+  const mstISO = dtInput + ':00-07:00';
+  const slotDate = new Date(mstISO);
+
+  if (slotDate < new Date()) {
+    fb.textContent = 'That time is in the past.';
+    fb.className = 'add-feedback err';
+    return;
+  }
+
+  const btn = document.getElementById('add-slot-btn');
+  btn.disabled = true;
+  btn.textContent = 'Adding…';
+
+  const { error } = await sb.from('availability_slots').insert({
+    slot_datetime: slotDate.toISOString(),
+    is_booked: false
+  });
+
+  btn.disabled = false;
+  btn.textContent = '+ Add Slot';
+
+  if (error) {
+    fb.textContent = 'Error: ' + error.message;
+    fb.className = 'add-feedback err';
+    return;
+  }
+
+  fb.textContent = 'Slot added.';
+  fb.className = 'add-feedback ok';
+  document.getElementById('slot-datetime').value = '';
+  await loadSlots();
+
+  // Hide feedback after 3s
+  setTimeout(() => { fb.style.display = 'none'; }, 3000);
+});
+
+/* ── BOOKINGS ─────────────────────────── */
+async function loadBookings() {
+  const tbody = document.getElementById('bookings-body');
+  const countEl = document.getElementById('bookings-count');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Loading bookings…</td></tr>';
+
+  const { data, error } = await sb
+    .from('bookings')
+    .select('id, full_name, phone, email, industry, needs, slot_id, created_at, availability_slots(slot_datetime)')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    tbody.innerHTML = `<tr><td colspan="7" style="color:var(--red);padding:14px">Error: ${error.message}</td></tr>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '';
+    document.getElementById('no-bookings').hidden = false;
+    countEl.textContent = '0 bookings';
+    return;
+  }
+
+  countEl.textContent = data.length + ' booking' + (data.length === 1 ? '' : 's');
+  document.getElementById('no-bookings').hidden = true;
+
+  tbody.innerHTML = '';
+  data.forEach(b => {
+    const slotTime = b.availability_slots?.slot_datetime
+      ? toMSTShort(b.availability_slots.slot_datetime)
+      : '—';
+    const received = new Date(b.created_at).toLocaleDateString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric'
+    });
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${esc(b.full_name)}</td>
+      <td><a href="tel:${esc(b.phone)}" style="text-decoration:none;color:var(--cream2)">${esc(b.phone)}</a></td>
+      <td><a href="mailto:${esc(b.email)}" style="text-decoration:none;color:var(--cream2)">${esc(b.email)}</a></td>
+      <td>${esc(b.industry)}</td>
+      <td class="td-needs">${esc(b.needs)}</td>
+      <td class="td-slot">${esc(slotTime)}</td>
+      <td style="white-space:nowrap;font-size:.75rem">${received}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function esc(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>

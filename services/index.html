@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services | Clearbound Digital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/site.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="/">Clearbound Digital</a>
+  <nav class="site-nav">
+    <a href="/work">Work</a>
+    <a href="/services">Services</a>
+    <a href="/#process">Process</a>
+    <a href="/contact" class="cta-link">Start a Project</a>
+  </nav>
+</header>
+<main class="page">
+  <section class="hero">
+    <div class="eyebrow">Services</div>
+    <h1>Nine Service Lines. One Unified Growth Engine.</h1>
+    <p>We connect strategy, media, creative, web, and automation into one coordinated system designed to scale predictable revenue.</p>
+  </section>
+
+  <section class="section">
+    <h2>Service Overview</h2>
+    <div class="services-list">
+      <a href="/services/marketing-strategy"><strong>Marketing Strategy</strong><span>Positioning, research, campaign architecture, and analytics planning.</span></a>
+      <a href="/services/saas-crm"><strong>SaaS & CRM Solutions</strong><span>CRM setup, pipeline management, lead routing, and dashboards.</span></a>
+      <a href="/services/ai-automation"><strong>AI Automation</strong><span>Agents, workflows, reporting automation, and content systems.</span></a>
+      <a href="/services/social-media"><strong>Social Media Management</strong><span>Content production, community management, and growth systems.</span></a>
+      <a href="/services/seo"><strong>SEO</strong><span>Technical SEO, content strategy, and authority building.</span></a>
+      <a href="/services/paid-advertising"><strong>Paid Advertising</strong><span>Cross-platform media buying with strict performance discipline.</span></a>
+      <a href="/services/web-design"><strong>Web Design & Development</strong><span>Conversion-focused websites with speed and clarity.</span></a>
+      <a href="/services/creative-ad-design"><strong>Creative & Ad Design</strong><span>Static and motion creative built for testing and scale.</span></a>
+      <a href="/services/email-sms"><strong>Email & SMS Marketing</strong><span>Lifecycle automation, campaigns, and retention sequences.</span></a>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Process Snapshot</h2>
+    <div class="steps">
+      <article class="card"><h3>Audit</h3><p>Benchmark channels, funnel conversion points, and opportunity gaps.</p></article>
+      <article class="card"><h3>Build</h3><p>Deploy strategy, creative, and tracking foundations for each channel.</p></article>
+      <article class="card"><h3>Optimize</h3><p>Improve CAC, CVR, and ROAS through fast iteration and testing.</p></article>
+      <article class="card"><h3>Scale</h3><p>Expand spend and systems only where unit economics prove out.</p></article>
+    </div>
+  </section>
+
+  <section class="cta-band">
+  <h2>Start Your Project</h2>
+  <p>Share a few details and we will follow up with a custom growth plan.</p>
+  <form data-mailto-form>
+    <div class="form-grid">
+      <input type="text" name="name" placeholder="Your name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="text" name="company" placeholder="Company">
+      <button type="submit">Let's Talk</button>
+    </div>
+    <div class="form-grid">
+      <textarea name="message" placeholder="What do you need help with?"></textarea>
+    </div>
+  </form>
+</section>
+<script>
+  document.querySelectorAll('[data-mailto-form]').forEach(function(form) {
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      window.location.href = 'mailto:john@clearbounddigital.com?subject=New%20Project%20Inquiry%20from%20clearbound.digital';
+    });
+  });
+</script>
+  <footer class="footer">
+  <div>
+    <h4>Clearbound Digital</h4>
+    <p>Full-service digital growth for businesses that want to win.</p>
+    <p>john@clearbounddigital.com<br>602-999-6990<br>Phoenix, AZ</p>
+  </div>
+  <div>
+    <h4>Services</h4>
+    <ul>
+      <li><a href="/services/marketing-strategy">Marketing Strategy</a></li>
+      <li><a href="/services/social-media">Social Media</a></li>
+      <li><a href="/services/seo">SEO</a></li>
+      <li><a href="/services/paid-advertising">Paid Ads</a></li>
+      <li><a href="/services/web-design">Web Design</a></li>
+      <li><a href="/services/ai-automation">AI Automation</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>Company</h4>
+    <ul>
+      <li><a href="/about">About</a></li>
+      <li><a href="/work">Work</a></li>
+      <li><a href="/contact">Contact</a></li>
+      <li><a href="https://www.instagram.com/clearbounddigital" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Clearbound Digital</span>
+    <span>Built for conversion, optimized for growth.</span>
+  </div>
+</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clearbound Digital — Phoenix Growth Partner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:   #0B0F1A;
+  --navy1:  #111827;
+  --navy2:  #1a2235;
+  --cream:  #EDE8DE;
+  --cream2: #D4CEC4;
+  --white:  #F8F6F2;
+  --dim:    rgba(237,232,222,0.35);
+  --dimmer: rgba(237,232,222,0.15);
+  --nav-h:  68px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { background: var(--navy); }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy);
+  color: var(--cream);
+  overflow: hidden;
+  height: 100vh;
+  cursor: none;
+}
+
+/* ─── GRAIN OVERLAY ─── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.028;
+  pointer-events: none;
+  z-index: 9000;
+  mix-blend-mode: overlay;
+}
+
+/* ─── CURSOR ─── */
+#cur-dot {
+  position: fixed; z-index: 9999;
+  width: 6px; height: 6px;
+  background: var(--cream);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%,-50%);
+  transition: width .15s, height .15s, opacity .15s;
+  will-change: left, top;
+}
+#cur-ring {
+  position: fixed; z-index: 9998;
+  width: 40px; height: 40px;
+  border: 1px solid rgba(237,232,222,.3);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%,-50%);
+  transition: width .3s, height .3s, border-color .3s;
+  will-change: left, top;
+}
+#cur-label {
+  position: fixed; z-index: 9997;
+  font-family: 'Syne', sans-serif;
+  font-size: .5rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--cream);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 26px);
+  transition: opacity .2s;
+  white-space: nowrap;
+}
+body.hovering #cur-ring { width: 70px; height: 70px; border-color: rgba(237,232,222,.6); }
+body.hovering #cur-label { opacity: 1; }
+body.hovering #cur-dot { opacity: 0; }
+
+/* ─── THREE.JS CANVAS ─── */
+#bg-canvas {
+  position: fixed; inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--nav-h); z-index: 500;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 52px;
+  background: transparent;
+  transition: background .4s;
+}
+nav.scrolled { background: rgba(11,15,26,.85); backdrop-filter: blur(20px); }
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700; font-size: 1.05rem;
+  letter-spacing: .04em; color: var(--white);
+  text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-logo-dot {
+  width: 6px; height: 6px;
+  background: var(--cream2);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .4; transform: scale(.7); }
+}
+.nav-links {
+  display: flex; align-items: center; gap: 36px;
+}
+.nav-links a {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .78rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--dim);
+  text-decoration: none;
+  transition: color .2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -3px; left: 0; right: 0; height: 1px;
+  background: var(--cream); transform: scaleX(0);
+  transform-origin: left; transition: transform .3s;
+}
+.nav-links a:hover { color: var(--cream); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-cta {
+  font-family: 'Syne', sans-serif;
+  font-size: .72rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--navy) !important;
+  background: var(--cream);
+  padding: 10px 22px;
+  text-decoration: none;
+  transition: background .2s, color .2s !important;
+}
+.nav-cta::after { display: none !important; }
+.nav-cta:hover { background: var(--white); color: var(--navy) !important; }
+
+/* ─── HORIZONTAL RAIL ─── */
+#rail {
+  position: fixed; top: 0; left: 0;
+  display: flex; align-items: stretch;
+  height: 100vh;
+  will-change: transform;
+  z-index: 1;
+}
+
+/* ─── PANEL BASE ─── */
+.panel {
+  flex-shrink: 0;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+/* ─── PROGRESS ─── */
+#progress {
+  position: fixed; bottom: 0; left: 0;
+  height: 1px; background: var(--cream2);
+  width: 0; z-index: 600;
+  transition: width .06s linear;
+}
+
+/* ─── BOTTOM UI ─── */
+.ui-bottom {
+  position: fixed; bottom: 28px; left: 52px;
+  z-index: 600;
+  display: flex; align-items: center; gap: 20px;
+}
+.ui-counter {
+  font-family: 'Syne', sans-serif;
+  font-size: .52rem; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--dimmer);
+}
+.ui-sep { width: 1px; height: 16px; background: var(--dimmer); }
+.ui-scroll-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .52rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--dimmer);
+}
+.scroll-arrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--dimmer); font-size: .52rem;
+  font-family: 'Syne', sans-serif; letter-spacing: .14em;
+  text-transform: uppercase;
+  animation: arrowBounce 2s ease-in-out infinite;
+}
+@keyframes arrowBounce {
+  0%,100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
+}
+
+/* ══════════════════════════════════
+   PANEL 01 — HERO
+══════════════════════════════════ */
+#p-hero {
+  width: 100vw;
+  background: transparent;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 0 0 0;
+}
+
+.hero-inner {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column;
+  padding: 0 72px;
+  width: 65%;
+  padding-top: var(--nav-h);
+}
+
+.hero-tag {
+  font-family: 'Syne', sans-serif;
+  font-size: .54rem; font-weight: 500;
+  letter-spacing: .28em; text-transform: uppercase;
+  color: var(--cream2);
+  margin-bottom: 32px;
+  opacity: 0; animation: slideUp .8s .2s forwards;
+  display: flex; align-items: center; gap: 14px;
+}
+.hero-tag::before {
+  content: ''; flex-shrink: 0;
+  width: 32px; height: 1px; background: var(--cream2); opacity: .5;
+}
+
+.hero-headline {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(4rem, 7.2vw, 8.5rem);
+  line-height: .9; letter-spacing: -.02em;
+  color: var(--white);
+  opacity: 0; animation: slideUp .9s .35s forwards;
+}
+.hero-headline .outline-text {
+  -webkit-text-stroke: 1px rgba(237,232,222,.4);
+  color: transparent;
+}
+.hero-headline .cream-word { color: var(--cream); }
+
+.hero-body {
+  margin-top: 36px;
+  max-width: 400px;
+  font-size: .92rem; font-weight: 300; line-height: 1.85;
+  color: var(--dim);
+  opacity: 0; animation: slideUp .9s .5s forwards;
+}
+
+.hero-actions {
+  margin-top: 48px;
+  display: flex; gap: 14px; align-items: center;
+  opacity: 0; animation: slideUp .9s .65s forwards;
+}
+.btn-primary {
+  font-family: 'Syne', sans-serif;
+  font-weight: 600; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase;
+  background: var(--cream); color: var(--navy);
+  padding: 14px 32px; text-decoration: none;
+  transition: background .22s, transform .18s;
+  display: inline-block;
+}
+.btn-primary:hover { background: var(--white); transform: translateY(-2px); }
+.btn-line {
+  font-family: 'Syne', sans-serif;
+  font-size: .72rem; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--dim); text-decoration: none;
+  display: flex; align-items: center; gap: 10px;
+  transition: color .2s;
+}
+.btn-line span { font-size: 1rem; transition: transform .2s; }
+.btn-line:hover { color: var(--cream); }
+.btn-line:hover span { transform: translateX(5px); }
+
+/* RIGHT side of hero — floating vertical text */
+.hero-right-accent {
+  position: absolute; right: 60px; top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: 32px;
+  opacity: 0; animation: fadeIn .9s .9s forwards;
+}
+.hero-vert-label {
+  writing-mode: vertical-rl;
+  font-family: 'Syne', sans-serif;
+  font-size: .5rem; font-weight: 500;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--dimmer);
+}
+.hero-scroll-indicator {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+}
+.scroll-track {
+  width: 1px; height: 60px;
+  background: var(--dimmer); position: relative; overflow: hidden;
+}
+.scroll-track::after {
+  content: ''; position: absolute;
+  top: -100%; left: 0; width: 100%; height: 100%;
+  background: var(--cream2);
+  animation: scrollLine 2s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  to { top: 100%; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ══════════════════════════════════
+   PANEL 02 — STATEMENT
+══════════════════════════════════ */
+#p-statement {
+  width: 80vw;
+  background: var(--cream);
+  padding: var(--nav-h) 80px 60px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+}
+.statement-label {
+  font-family: 'Syne', sans-serif;
+  font-size: .52rem; font-weight: 500;
+  letter-spacing: .24em; text-transform: uppercase;
+  color: rgba(11,15,26,.4);
+  margin-bottom: 40px;
+  display: flex; align-items: center; gap: 12px;
+}
+.statement-label::before {
+  content: ''; width: 22px; height: 1px;
+  background: rgba(11,15,26,.3);
+}
+.statement-body {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.2rem, 4vw, 4.8rem);
+  line-height: 1.08; letter-spacing: -.02em;
+  color: var(--navy);
+  max-width: 780px;
+}
+.statement-body em {
+  font-style: italic;
+  color: rgba(11,15,26,.3);
+  font-weight: 400;
+}
+.statement-sub {
+  margin-top: 48px;
+  font-size: .9rem; font-weight: 300;
+  line-height: 1.8; color: rgba(11,15,26,.55);
+  max-width: 440px;
+}
+.statement-tags {
+  margin-top: 44px;
+  display: flex; flex-wrap: wrap; gap: 10px;
+}
+.s-tag {
+  font-family: 'Syne', sans-serif;
+  font-size: .52rem; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase;
+  border: 1px solid rgba(11,15,26,.18);
+  padding: 7px 16px;
+  color: rgba(11,15,26,.5);
+  transition: border-color .2s, color .2s, background .2s;
+}
+.s-tag:hover {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--cream);
+}
+
+/* marquee at bottom of statement */
+.mq-wrap {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  border-top: 1px solid rgba(11,15,26,.1);
+  padding: 14px 0; overflow: hidden;
+}
+.mq-track { display: inline-flex; animation: mq 20s linear infinite; }
+.mq-item {
+  font-family: 'Syne', sans-serif;
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(11,15,26,.12); padding: 0 28px;
+}
+.mq-item.on { color: rgba(11,15,26,.45); }
+@keyframes mq { to { transform: translateX(-50%); } }
+
+/* ══════════════════════════════════
+   SERVICE PANELS
+══════════════════════════════════ */
+.svc-panel {
+  width: 48vw;
+  background: var(--navy1);
+  border-right: 1px solid rgba(237,232,222,.06);
+  flex-direction: column;
+  justify-content: space-between;
+  padding: calc(var(--nav-h) + 44px) 56px 52px;
+  transition: background .3s;
+}
+.svc-panel:hover { background: var(--navy2); }
+.svc-panel:nth-child(odd) { background: var(--navy); }
+.svc-panel:nth-child(odd):hover { background: var(--navy1); }
+
+/* top accent */
+.svc-panel::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, var(--cream2) 0%, transparent 60%);
+  opacity: .2;
+}
+
+.svc-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.svc-idx {
+  font-family: 'Syne', sans-serif;
+  font-size: .5rem; font-weight: 500;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--dimmer);
+}
+.svc-ico { width: 38px; height: 38px; opacity: .55; }
+
+.svc-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 28px 0; }
+.svc-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.4rem, 4vw, 4.8rem);
+  line-height: .9; letter-spacing: -.02em;
+  color: var(--white); margin-bottom: 20px;
+}
+.svc-desc {
+  font-size: .86rem; font-weight: 300;
+  line-height: 1.8; color: var(--dim);
+  max-width: 340px;
+}
+
+.svc-foot {
+  display: flex; justify-content: space-between; align-items: flex-end;
+}
+.svc-list { display: flex; flex-direction: column; gap: 7px; }
+.svc-li {
+  font-family: 'Syne', sans-serif;
+  font-size: .5rem; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--dimmer);
+  display: flex; align-items: center; gap: 10px;
+}
+.svc-li::before { content: ''; width: 10px; height: 1px; background: var(--dimmer); flex-shrink: 0; }
+.svc-btn {
+  width: 42px; height: 42px; flex-shrink: 0;
+  border: 1px solid rgba(237,232,222,.12);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--dim); font-size: .9rem; text-decoration: none;
+  transition: all .22s;
+}
+.svc-btn:hover { background: var(--cream); border-color: var(--cream); color: var(--navy); }
+
+/* ══════════════════════════════════
+   PANEL — PROCESS
+══════════════════════════════════ */
+#process {
+  width: 82vw;
+  background: var(--navy-dim, #090d16);
+  flex-direction: column;
+  justify-content: center;
+  padding: calc(var(--nav-h) + 40px) 64px 52px;
+  gap: 52px;
+}
+.proc-top {
+  display: flex; justify-content: space-between; align-items: flex-end;
+}
+.proc-hed-group {}
+.proc-eyebrow {
+  font-family: 'Syne', sans-serif;
+  font-size: .52rem; font-weight: 500;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: var(--dimmer); margin-bottom: 12px;
+}
+.proc-hed {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.6rem, 5vw, 5.5rem);
+  line-height: .88; letter-spacing: -.02em;
+  color: var(--white);
+}
+.proc-note {
+  font-size: .84rem; font-weight: 300; line-height: 1.7;
+  color: var(--dimmer); max-width: 240px; text-align: right;
+}
+.proc-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 1px; background: rgba(237,232,222,.06);
+  border: 1px solid rgba(237,232,222,.06);
+}
+.proc-cell {
+  background: #090d16;
+  padding: 36px 28px;
+  display: flex; flex-direction: column; gap: 14px;
+  transition: background .25s;
+}
+.proc-cell:hover { background: var(--navy1); }
+.proc-n {
+  font-family: 'Syne', sans-serif;
+  font-size: .5rem; font-weight: 500;
+  letter-spacing: .18em; color: var(--dimmer);
+}
+.proc-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700; font-size: 1.55rem;
+  letter-spacing: -.01em; color: var(--white);
+}
+.proc-text {
+  font-size: .82rem; font-weight: 300;
+  line-height: 1.65; color: var(--dim);
+}
+
+/* ══════════════════════════════════
+   PANEL — SERVICES GRID (overview)
+══════════════════════════════════ */
+#p-overview {
+  width: 76vw;
+  background: var(--cream);
+  flex-direction: column;
+  justify-content: center;
+  padding: calc(var(--nav-h) + 40px) 64px 52px;
+  gap: 48px;
+}
+.ov-label {
+  font-family: 'Syne', sans-serif;
+  font-size: .52rem; font-weight: 500;
+  letter-spacing: .24em; text-transform: uppercase;
+  color: rgba(11,15,26,.35);
+  display: flex; align-items: center; gap: 12px;
+}
+.ov-label::before { content: ''; width: 22px; height: 1px; background: rgba(11,15,26,.3); }
+.ov-hed {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.4rem, 4.5vw, 5rem);
+  line-height: .9; letter-spacing: -.025em; color: var(--navy);
+}
+.ov-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(11,15,26,.1);
+  border: 1px solid rgba(11,15,26,.1);
+  flex: 1;
+  max-height: 260px;
+}
+.ov-cell {
+  background: var(--cream);
+  padding: 24px 24px;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: background .22s;
+  text-decoration: none;
+}
+.ov-cell:hover { background: var(--navy); }
+.ov-cell:hover .ov-cell-n { color: rgba(237,232,222,.3); }
+.ov-cell:hover .ov-cell-name { color: var(--white); }
+.ov-cell-n {
+  font-family: 'Syne', sans-serif;
+  font-size: .46rem; letter-spacing: .14em;
+  color: rgba(11,15,26,.3); transition: color .22s;
+}
+.ov-cell-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700; font-size: .92rem;
+  letter-spacing: -.01em; color: var(--navy);
+  transition: color .22s;
+}
+
+/* ══════════════════════════════════
+   PANEL — CTA
+══════════════════════════════════ */
+#p-cta {
+  width: 72vw;
+  background: var(--navy);
+  flex-direction: column;
+  justify-content: center;
+  padding: calc(var(--nav-h) + 40px) 72px 52px;
+  gap: 0;
+}
+/* large ghost text behind */
+#p-cta::before {
+  content: 'LET\'S';
+  position: absolute; left: 52px; bottom: -30px;
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: 28vw; line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(237,232,222,.04);
+  pointer-events: none; user-select: none;
+}
+.cta-wrap { position: relative; z-index: 2; }
+.cta-eyebrow {
+  font-family: 'Syne', sans-serif;
+  font-size: .52rem; font-weight: 500;
+  letter-spacing: .24em; text-transform: uppercase;
+  color: var(--dimmer); margin-bottom: 28px;
+  display: flex; align-items: center; gap: 12px;
+}
+.cta-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--cream2); opacity: .4; }
+.cta-hed {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(3rem, 6vw, 7rem);
+  line-height: .88; letter-spacing: -.025em;
+  color: var(--white); margin-bottom: 32px;
+}
+.cta-hed .outline {
+  -webkit-text-stroke: 1px rgba(237,232,222,.35);
+  color: transparent;
+}
+.cta-sub {
+  font-size: .9rem; font-weight: 300;
+  line-height: 1.8; color: var(--dim);
+  max-width: 440px; margin-bottom: 48px;
+}
+.cta-form {
+  display: flex; overflow: hidden;
+  border: 1px solid rgba(237,232,222,.15);
+  max-width: 440px;
+}
+.cta-form input {
+  flex: 1; border: none; background: transparent;
+  padding: 15px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .86rem; color: var(--cream); outline: none;
+}
+.cta-form input::placeholder { color: var(--dimmer); }
+.cta-form button {
+  background: var(--cream); border: none;
+  padding: 15px 26px;
+  font-family: 'Syne', sans-serif;
+  font-size: .66rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--navy); cursor: none; white-space: nowrap;
+  transition: background .2s;
+}
+.cta-form button:hover { background: var(--white); }
+
+/* ══════════════════════════════════
+   PANEL — FOOTER
+══════════════════════════════════ */
+#p-footer {
+  width: 52vw;
+  background: #070a12;
+  border-left: 1px solid rgba(237,232,222,.05);
+  flex-direction: column;
+  justify-content: space-between;
+  padding: calc(var(--nav-h) + 40px) 64px 40px;
+}
+.foot-top { display: flex; gap: 56px; }
+.foot-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 1.9rem;
+  letter-spacing: -.01em; color: var(--white);
+  line-height: 1; margin-bottom: 14px;
+}
+.foot-logo span { color: var(--dimmer); font-weight: 400; }
+.foot-tagline {
+  font-size: .82rem; font-weight: 300;
+  color: var(--dimmer); line-height: 1.65;
+  max-width: 220px;
+}
+.foot-cols { display: flex; gap: 44px; }
+.foot-col h6 {
+  font-family: 'Syne', sans-serif;
+  font-size: .48rem; font-weight: 600;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(237,232,222,.18); margin-bottom: 16px;
+}
+.foot-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.foot-col a {
+  font-size: .8rem; color: var(--dimmer);
+  text-decoration: none; font-weight: 300;
+  transition: color .2s;
+}
+.foot-col a:hover { color: var(--white); }
+.foot-bottom {
+  border-top: 1px solid rgba(237,232,222,.06);
+  padding-top: 24px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.foot-copy {
+  font-family: 'Syne', sans-serif;
+  font-size: .48rem; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: rgba(237,232,222,.15);
+}
+
+/* ── RESULTS PANEL ── */
+#p-results {
+  width: 82vw;
+  background: var(--navy1);
+  flex-direction: column;
+  justify-content: center;
+  padding: calc(var(--nav-h) + 40px) 64px 52px;
+  gap: 52px;
+}
+
+/* ── RESULTS OVERRIDES ── */
+.results-grid { grid-template-columns: repeat(3,1fr) !important; }
+.res-label {
+  font-family: 'Syne', sans-serif;
+  font-size: .52rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--cream2) !important;
+  opacity: 1;
+}
+.res-name { font-size: 1.25rem !important; }
+.foot-socials { display: flex; gap: 10px; }
+.foot-socials a {
+  width: 30px; height: 30px;
+  border: 1px solid rgba(237,232,222,.08);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--dimmer);
+  font-family: 'Syne', sans-serif;
+  font-size: .5rem; font-weight: 600;
+  text-decoration: none;
+  transition: border-color .2s, color .2s;
+}
+.foot-socials a:hover { border-color: var(--cream2); color: var(--cream); }
+
+/* ══════════════════════════════════
+   BOOKING MODAL
+══════════════════════════════════ */
+#booking-overlay {
+  position: fixed; inset: 0;
+  background: rgba(7,10,18,.93);
+  backdrop-filter: blur(22px);
+  z-index: 8500;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .32s;
+}
+#booking-overlay.open { opacity: 1; pointer-events: all; }
+
+#booking-panel {
+  background: var(--navy1);
+  border: 1px solid rgba(237,232,222,.08);
+  width: 100%; max-width: 660px;
+  max-height: 88vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 48px 52px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(237,232,222,.12) transparent;
+}
+#booking-panel::-webkit-scrollbar { width: 4px; }
+#booking-panel::-webkit-scrollbar-thumb { background: rgba(237,232,222,.12); }
+
+.modal-close {
+  position: absolute; top: 18px; right: 22px;
+  background: none; border: none;
+  color: var(--dim); cursor: none;
+  font-size: 1.5rem; line-height: 1;
+  padding: 4px; transition: color .2s;
+}
+.modal-close:hover { color: var(--cream); }
+
+.modal-eyebrow {
+  font-family: 'Syne', sans-serif;
+  font-size: .5rem; font-weight: 500;
+  letter-spacing: .24em; text-transform: uppercase;
+  color: var(--dimmer); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 12px;
+}
+.modal-eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--cream2); opacity: .4; }
+
+.modal-hed {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: .92; letter-spacing: -.02em;
+  color: var(--white); margin-bottom: 36px;
+}
+
+.modal-label {
+  font-family: 'Syne', sans-serif;
+  font-size: .48rem; font-weight: 600;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--dimmer); margin-bottom: 12px;
+  display: block;
+}
+
+#slots-grid {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 10px; min-height: 44px;
+}
+.slot-pill {
+  font-family: 'Syne', sans-serif;
+  font-size: .6rem; font-weight: 600;
+  letter-spacing: .04em;
+  border: 1px solid rgba(237,232,222,.16);
+  padding: 9px 15px;
+  color: var(--dim); cursor: none;
+  background: transparent;
+  transition: border-color .18s, color .18s, background .18s;
+  white-space: nowrap;
+}
+.slot-pill:hover { border-color: rgba(237,232,222,.4); color: var(--cream); }
+.slot-pill.selected { background: var(--cream); border-color: var(--cream); color: var(--navy); }
+
+.slots-empty, .slots-loading {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .82rem; font-weight: 300;
+  color: var(--dimmer);
+}
+.slots-loading { font-family: 'Syne', sans-serif; font-size: .5rem; letter-spacing: .1em; text-transform: uppercase; }
+
+.modal-divider { width: 100%; height: 1px; background: rgba(237,232,222,.07); margin: 24px 0; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.booking-field {
+  width: 100%; margin-bottom: 12px;
+  background: rgba(237,232,222,.04);
+  border: 1px solid rgba(237,232,222,.1);
+  color: var(--cream);
+  font-family: 'DM Sans', sans-serif; font-size: .86rem;
+  padding: 13px 16px; outline: none;
+  transition: border-color .2s; -webkit-appearance: none; appearance: none;
+}
+.booking-field::placeholder { color: var(--dimmer); }
+.booking-field:focus { border-color: rgba(237,232,222,.35); }
+select.booking-field option { background: #111827; color: var(--cream); }
+textarea.booking-field { resize: vertical; min-height: 88px; }
+
+.booking-submit {
+  width: 100%; margin-top: 8px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 600; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase;
+  background: var(--cream); color: var(--navy);
+  border: none; padding: 16px 32px; cursor: none;
+  transition: background .22s, transform .18s;
+}
+.booking-submit:hover:not(:disabled) { background: var(--white); transform: translateY(-2px); }
+.booking-submit:disabled { opacity: .5; cursor: not-allowed; }
+
+.f-error {
+  font-size: .74rem; color: #e07070;
+  font-family: 'DM Sans', sans-serif;
+  margin: -8px 0 10px; display: none;
+}
+.f-error.show { display: block; }
+
+#booking-success { text-align: center; padding: 28px 0; }
+.success-check {
+  width: 54px; height: 54px;
+  border: 1px solid rgba(237,232,222,.2); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px; font-size: 1.3rem; color: var(--cream);
+}
+.success-hed {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: 2.4rem; line-height: .92; letter-spacing: -.02em;
+  color: var(--white); margin-bottom: 16px;
+}
+.success-sub {
+  font-size: .88rem; font-weight: 300; line-height: 1.8;
+  color: var(--dim); max-width: 360px; margin: 0 auto 32px;
+}
+</style>
+</head>
+<body>
+
+<!-- BOOKING MODAL -->
+<div id="booking-overlay" role="dialog" aria-modal="true" aria-label="Book a Growth Audit">
+  <div id="booking-panel">
+    <button class="modal-close" id="close-modal" aria-label="Close">×</button>
+
+    <div id="booking-form-wrap">
+      <div class="modal-eyebrow">Free 30-Minute Call</div>
+      <h2 class="modal-hed">Book Your<br>Growth Audit</h2>
+
+      <label class="modal-label">Choose a Time — Phoenix, AZ (MST)</label>
+      <div id="slots-grid">
+        <span class="slots-loading">Loading available times…</span>
+      </div>
+      <p class="f-error" id="slot-error">Please select a time slot.</p>
+
+      <div class="modal-divider"></div>
+
+      <form id="booking-form" novalidate>
+        <div class="field-row">
+          <div>
+            <input type="text" class="booking-field" id="bf-name" placeholder="Full Name" autocomplete="name">
+            <p class="f-error" id="err-name">Required</p>
+          </div>
+          <div>
+            <input type="tel" class="booking-field" id="bf-phone" placeholder="Phone Number" autocomplete="tel">
+            <p class="f-error" id="err-phone">Required</p>
+          </div>
+        </div>
+        <input type="email" class="booking-field" id="bf-email" placeholder="Email Address" autocomplete="email">
+        <p class="f-error" id="err-email">Please enter a valid email address.</p>
+        <select class="booking-field" id="bf-industry">
+          <option value="">Select your industry…</option>
+          <option value="HVAC">HVAC</option>
+          <option value="Roofing">Roofing</option>
+          <option value="Electrical">Electrical</option>
+          <option value="Plumbing">Plumbing</option>
+          <option value="Other">Other</option>
+        </select>
+        <p class="f-error" id="err-industry">Please select your industry.</p>
+        <textarea class="booking-field" id="bf-needs" placeholder="What do you need help with? (more leads, better website, Google ranking, etc.)"></textarea>
+        <p class="f-error" id="err-needs">Required</p>
+        <button type="submit" class="booking-submit" id="booking-btn">Confirm Booking →</button>
+      </form>
+    </div>
+
+    <div id="booking-success" hidden>
+      <div class="success-check">✓</div>
+      <div class="success-hed">You're booked.</div>
+      <p class="success-sub">We'll see you soon. Keep an eye on your phone — we'll reach out to confirm. Questions? Call 602-999-6990 or email john@clearbounddigital.com.</p>
+      <button class="booking-submit" style="max-width:220px;margin:0 auto;" onclick="document.getElementById('booking-overlay').classList.remove('open');document.body.style.overflow='';">Back to Site</button>
+    </div>
+  </div>
+</div>
+
+<!-- CURSOR -->
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<div id="cur-label">View</div>
+
+<!-- THREE.JS BG -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-dot"></div>
+    Clearbound Digital
+  </a>
+  <div class="nav-links">
+    <a href="#p-statement">About</a>
+    <a href="#process">How It Works</a>
+    <a href="#p-results">Results</a>
+    <a href="#book" class="open-booking" class="nav-cta">Book a Free Audit</a>
+  </div>
+</nav>
+
+<!-- PROGRESS -->
+<div id="progress"></div>
+
+<!-- BOTTOM UI -->
+<div class="ui-bottom">
+  <span class="ui-counter" id="counter">01 / 12</span>
+  <div class="ui-sep"></div>
+  <span class="scroll-arrow">Scroll →</span>
+</div>
+
+<!-- HORIZONTAL RAIL -->
+<div id="rail">
+
+  <!-- ── 01 HERO ── -->
+  <div class="panel" id="p-hero">
+    <div class="hero-inner">
+      <div class="hero-tag">Phoenix, AZ · Local Service Growth</div>
+      <h1 class="hero-headline">
+        We Help Phoenix<br>
+        Service Businesses<br>
+        <span class="outline-text">Get More Customers</span>
+      </h1>
+      <p class="hero-body">Clearbound Digital is your full-stack growth partner — not just another agency.</p>
+      <div class="hero-actions">
+        <a href="#book" class="open-booking" class="btn-primary">Book a Free Growth Audit</a>
+      </div>
+    </div>
+    <div class="hero-right-accent">
+      <div class="hero-vert-label">Scroll to explore</div>
+      <div class="hero-scroll-indicator">
+        <div class="scroll-track"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 02 STATEMENT ── -->
+  <div class="panel" id="p-statement">
+    <div class="statement-label">About Clearbound</div>
+    <div class="statement-body">
+      Built for local.<br>
+      <em>Obsessed with</em><br>
+      results.
+    </div>
+    <p class="statement-sub">We work exclusively with local service businesses and contractors. We don't hand you a deck and disappear — we build the system, run it, and own the results with you. Based in Phoenix, AZ.</p>
+    <div class="statement-tags">
+      <span class="s-tag">Local Only</span>
+      <span class="s-tag">Phoenix, AZ</span>
+      <span class="s-tag">Contractors</span>
+      <span class="s-tag">Service Businesses</span>
+      <span class="s-tag">Hands-On</span>
+      <span class="s-tag">Results-Owned</span>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-track">
+        <span class="mq-item on">Websites</span><span class="mq-item">·</span>
+        <span class="mq-item">Google Ads</span><span class="mq-item">·</span>
+        <span class="mq-item on">Automation</span><span class="mq-item">·</span>
+        <span class="mq-item">Local SEO</span><span class="mq-item">·</span>
+        <span class="mq-item on">Leads</span><span class="mq-item">·</span>
+        <span class="mq-item">Social Media</span><span class="mq-item">·</span>
+        <span class="mq-item on">Growth</span><span class="mq-item">·</span>
+        <span class="mq-item">Websites</span><span class="mq-item">·</span>
+        <span class="mq-item on">Google Ads</span><span class="mq-item">·</span>
+        <span class="mq-item">Automation</span><span class="mq-item">·</span>
+        <span class="mq-item on">Local SEO</span><span class="mq-item">·</span>
+        <span class="mq-item">Leads</span><span class="mq-item">·</span>
+        <span class="mq-item on">Social Media</span><span class="mq-item">·</span>
+        <span class="mq-item">Growth</span><span class="mq-item">·</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HOW IT WORKS ── -->
+  <div class="panel" id="process">
+    <div class="proc-top">
+      <div class="proc-hed-group">
+        <div class="proc-eyebrow">Simple &amp; Straightforward</div>
+        <div class="proc-hed">How It<br>Works</div>
+      </div>
+      <p class="proc-note">No long contracts. No confusing deliverables. Just a clear path from where you are to where you want to be.</p>
+    </div>
+    <div class="proc-grid" style="grid-template-columns: repeat(3,1fr);">
+      <div class="proc-cell">
+        <span class="proc-n">01</span>
+        <div class="proc-name">Audit</div>
+        <p class="proc-text">We audit your online presence and find exactly where you're losing leads — your website, search rankings, ads, or all three.</p>
+      </div>
+      <div class="proc-cell">
+        <span class="proc-n">02</span>
+        <div class="proc-name">Build</div>
+        <p class="proc-text">We build the system — website, ads, automation, or whatever you actually need. No bloated packages, no guesswork.</p>
+      </div>
+      <div class="proc-cell">
+        <span class="proc-n">03</span>
+        <div class="proc-name">Scale</div>
+        <p class="proc-text">We manage and scale it month over month. You focus on the work. We bring you more of it.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESULTS ── -->
+  <div class="panel" id="p-results">
+    <div class="proc-top">
+      <div class="proc-hed-group">
+        <div class="proc-eyebrow">Real Clients, Real Wins</div>
+        <div class="proc-hed">Results<br>That Matter</div>
+      </div>
+      <p class="proc-note">Honest wins from local businesses we've worked with. No fake numbers — just what actually happened.</p>
+    </div>
+    <div class="proc-grid results-grid">
+      <div class="proc-cell">
+        <span class="proc-n res-label">Electrician</span>
+        <div class="proc-name res-name">Ranking &amp; Getting Calls</div>
+        <p class="proc-text">Built a new website and set up their Google Business Profile. They're now showing up locally and getting consistent inbound calls.</p>
+      </div>
+      <div class="proc-cell">
+        <span class="proc-n res-label">Fingerprinting Service</span>
+        <div class="proc-name res-name">Website Built, System in Progress</div>
+        <p class="proc-text">Launched their website and are currently building out an automation system to handle lead follow-up without lifting a finger.</p>
+      </div>
+      <div class="proc-cell">
+        <span class="proc-n res-label">Dress Boutique</span>
+        <div class="proc-name res-name">Growing Online Presence</div>
+        <p class="proc-text">Managing their social media — consistent content, growing following, and building real brand recognition in the local market.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CTA ── -->
+  <div class="panel" id="p-cta">
+    <div class="cta-wrap">
+      <div class="cta-eyebrow">Let's Talk</div>
+      <h2 class="cta-hed">
+        Ready<br>
+        to <span class="outline">Grow</span>?
+      </h2>
+      <p class="cta-sub">Book a free 30-minute growth audit. No pitch, no pressure. We'll look at what's working, what's not, and tell you exactly what we'd do.</p>
+      <a href="#book" class="open-booking" class="btn-primary" style="display:inline-block; margin-bottom:40px;">Book Your Free Audit</a>
+      <p class="cta-sub">john@clearbounddigital.com<br>602-999-6990<br>Phoenix, AZ</p>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="panel" id="p-footer">
+    <div class="foot-top">
+      <div>
+        <div class="foot-logo">Clearbound<br><span>Digital</span></div>
+        <p class="foot-tagline">Growth partner for Phoenix service businesses and contractors.</p>
+        <p class="foot-tagline">john@clearbounddigital.com<br>602-999-6990<br>Phoenix, AZ</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h6>What We Do</h6>
+          <ul>
+            <li><a href="#process">Websites</a></li>
+            <li><a href="#process">Google Ads</a></li>
+            <li><a href="#process">Local SEO</a></li>
+            <li><a href="#process">Social Media</a></li>
+            <li><a href="#process">Automation</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <h6>Company</h6>
+          <ul>
+            <li><a href="#p-statement">About</a></li>
+            <li><a href="#p-results">Results</a></li>
+            <li><a href="#p-cta">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span class="foot-copy">© 2026 Clearbound Digital — clearbound.digital</span>
+      <div class="foot-socials">
+        <a href="https://www.instagram.com/clearbounddigital" target="_blank" rel="noopener noreferrer">IG</a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /rail -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ══════════════════════════════════════════
+   THREE.JS — PARTICLE FIELD
+══════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('bg-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+  camera.position.z = 80;
+
+  // Particles
+  const count = 1800;
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(count * 3);
+  const sizes = new Float32Array(count);
+
+  for(let i = 0; i < count; i++){
+    pos[i*3]   = (Math.random() - .5) * 260;
+    pos[i*3+1] = (Math.random() - .5) * 180;
+    pos[i*3+2] = (Math.random() - .5) * 120;
+    sizes[i]   = Math.random() * 1.5 + .3;
+  }
+
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+  const mat = new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    uniforms: {
+      uTime:   { value: 0 },
+      uMouse:  { value: new THREE.Vector2(.5, .5) },
+      uScroll: { value: 0 },
+    },
+    vertexShader: `
+      attribute float size;
+      uniform float uTime;
+      uniform vec2 uMouse;
+      uniform float uScroll;
+      varying float vDist;
+
+      void main(){
+        vec3 p = position;
+        // gentle drift
+        p.x += sin(uTime * .18 + p.z * .04) * 1.2;
+        p.y += cos(uTime * .14 + p.x * .04) * 1.0;
+        // mouse parallax
+        p.x += (uMouse.x - .5) * 8.0 * (p.z / 60.0);
+        p.y += (uMouse.y - .5) * -6.0 * (p.z / 60.0);
+        // scroll displacement
+        p.x -= uScroll * .04;
+
+        vec4 mvp = modelViewMatrix * vec4(p, 1.0);
+        gl_PointSize = size * (280.0 / -mvp.z);
+        gl_Position = projectionMatrix * mvp;
+
+        vDist = length(p.xy) / 140.0;
+      }
+    `,
+    fragmentShader: `
+      varying float vDist;
+      void main(){
+        float d = length(gl_PointCoord - .5) * 2.0;
+        if(d > 1.0) discard;
+        float alpha = (1.0 - d) * (1.0 - vDist * .5) * .55;
+        gl_FragColor = vec4(.93, .91, .87, alpha);
+      }
+    `
+  });
+
+  const points = new THREE.Points(geo, mat);
+  scene.add(points);
+
+  // Connection lines — sparse
+  const lineMat = new THREE.LineBasicMaterial({
+    color: 0xede8de,
+    transparent: true,
+    opacity: 0.04
+  });
+
+  // Pick 120 random pairs close enough to connect
+  const lineGeo = new THREE.BufferGeometry();
+  const linePos = [];
+  const threshold = 28;
+  let lineCount = 0;
+  for(let i = 0; i < count && lineCount < 120; i++){
+    for(let j = i+1; j < count && lineCount < 120; j++){
+      const dx = pos[i*3]-pos[j*3], dy = pos[i*3+1]-pos[j*3+1], dz = pos[i*3+2]-pos[j*3+2];
+      const dist = Math.sqrt(dx*dx+dy*dy+dz*dz);
+      if(dist < threshold){
+        linePos.push(pos[i*3],pos[i*3+1],pos[i*3+2], pos[j*3],pos[j*3+1],pos[j*3+2]);
+        lineCount++;
+      }
+    }
+  }
+  lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePos, 3));
+  const lines = new THREE.LineSegments(lineGeo, lineMat);
+  scene.add(lines);
+
+  let mx = .5, my = .5, tmx = .5, tmy = .5;
+  document.addEventListener('mousemove', e => {
+    tmx = e.clientX / window.innerWidth;
+    tmy = e.clientY / window.innerHeight;
+  });
+
+  let scrollVal = 0;
+
+  window.addEventListener('resize', ()=>{
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  });
+
+  function tick(t){
+    requestAnimationFrame(tick);
+    mx += (tmx - mx) * .04;
+    my += (tmy - my) * .04;
+    mat.uniforms.uTime.value  = t * .001;
+    mat.uniforms.uMouse.value.set(mx, my);
+    mat.uniforms.uScroll.value = scrollVal;
+    points.rotation.y = t * .00008;
+    points.rotation.x = t * .00004;
+    lines.rotation.copy(points.rotation);
+    renderer.render(scene, camera);
+  }
+  tick(0);
+
+  // expose scroll value
+  window._setParticleScroll = v => { scrollVal = v; };
+})();
+
+/* ══════════════════════════════════════════
+   CURSOR
+══════════════════════════════════════════ */
+const dot    = document.getElementById('cur-dot');
+const ring   = document.getElementById('cur-ring');
+const label  = document.getElementById('cur-label');
+let mx=0,my=0,rx=0,ry=0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.left = mx+'px'; dot.style.top = my+'px';
+  label.style.left = mx+'px'; label.style.top = my+'px';
+});
+(function loop(){
+  rx += (mx-rx)*.12; ry += (my-ry)*.12;
+  ring.style.left = rx+'px'; ring.style.top = ry+'px';
+  requestAnimationFrame(loop);
+})();
+
+document.querySelectorAll('a, button, .proc-cell').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+});
+
+/* ══════════════════════════════════════════
+   HORIZONTAL SCROLL
+══════════════════════════════════════════ */
+const rail    = document.getElementById('rail');
+const progress = document.getElementById('progress');
+const counter  = document.getElementById('counter');
+const navEl    = document.getElementById('main-nav');
+const allPanels = [...document.querySelectorAll('#rail > .panel')];
+
+let cx=0, tx=0, total=0;
+
+function calcTotal(){
+  total = allPanels.reduce((s,p) => s + p.offsetWidth, 0) - window.innerWidth;
+}
+calcTotal();
+window.addEventListener('resize', calcTotal);
+
+(function raf(){
+  cx += (tx - cx) * .085;
+  if(Math.abs(tx - cx) > .1){
+    rail.style.transform = `translateX(${-cx}px)`;
+  }
+
+  const pct = total > 0 ? cx / total : 0;
+  progress.style.width = (pct * 100) + '%';
+
+  if(window._setParticleScroll) window._setParticleScroll(cx);
+
+  // nav tint
+  if(cx > 40) navEl.classList.add('scrolled');
+  else navEl.classList.remove('scrolled');
+
+  // counter
+  let acc=0, idx=0;
+  allPanels.forEach((p,i) => {
+    if(cx >= acc - window.innerWidth * .4) idx = i;
+    acc += p.offsetWidth;
+  });
+  counter.textContent = String(idx+1).padStart(2,'0') + ' / ' + String(allPanels.length).padStart(2,'0');
+
+  requestAnimationFrame(raf);
+})();
+
+// Wheel
+window.addEventListener('wheel', e => {
+  e.preventDefault();
+  tx = Math.max(0, Math.min(total, tx + e.deltaY * 1.15));
+}, { passive: false });
+
+// Touch
+let t0x=0;
+window.addEventListener('touchstart', e => { t0x = e.touches[0].clientX; }, {passive:true});
+window.addEventListener('touchmove', e => {
+  const dx = t0x - e.touches[0].clientX;
+  if(Math.abs(dx) > 5){
+    e.preventDefault();
+    tx = Math.max(0, Math.min(total, tx + dx * 1.5));
+    t0x = e.touches[0].clientX;
+  }
+}, { passive: false });
+
+// Keys
+window.addEventListener('keydown', e => {
+  const s = window.innerWidth * .8;
+  if(e.key === 'ArrowRight' || e.key === 'ArrowDown') tx = Math.min(total, tx + s);
+  if(e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   tx = Math.max(0, tx - s);
+  if(e.key === 'Escape') closeBookingModal();
+});
+
+/* ══════════════════════════════════════════
+   SUPABASE + BOOKING MODAL
+══════════════════════════════════════════ */
+const SUPABASE_URL = 'https://fcpzzyixxzuhytqvnngi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjcHp6eWl4eHp1aHl0cXZubmdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzQ4NzIsImV4cCI6MjA4OTk1MDg3Mn0.SSXCNw0QTePrxFvuwNodHznlW0-E-tm_LRoRIuAyw_o';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const overlay    = document.getElementById('booking-overlay');
+const slotsGrid  = document.getElementById('slots-grid');
+const formWrap   = document.getElementById('booking-form-wrap');
+const successEl  = document.getElementById('booking-success');
+let selectedSlot = null; // { id, slot_datetime }
+
+// ── Open / Close ──────────────────────────
+function openBookingModal() {
+  selectedSlot = null;
+  formWrap.hidden = false;
+  successEl.hidden = true;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  loadSlots();
+}
+function closeBookingModal() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('close-modal').addEventListener('click', closeBookingModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeBookingModal(); });
+
+// Wire every "Book" link on the page
+document.querySelectorAll('a.open-booking').forEach(a =>
+  a.addEventListener('click', e => { e.preventDefault(); openBookingModal(); })
+);
+
+// ── Slot helpers ──────────────────────────
+const toMST = iso => new Date(iso).toLocaleString('en-US', {
+  timeZone: 'America/Phoenix',
+  weekday: 'short', month: 'short', day: 'numeric',
+  hour: 'numeric', minute: '2-digit', hour12: true
+});
+
+async function loadSlots() {
+  slotsGrid.innerHTML = '<span class="slots-loading">Loading available times…</span>';
+  const { data, error } = await sb
+    .from('availability_slots')
+    .select('id, slot_datetime')
+    .eq('is_booked', false)
+    .gte('slot_datetime', new Date().toISOString())
+    .order('slot_datetime', { ascending: true });
+
+  if (error || !data || data.length === 0) {
+    slotsGrid.innerHTML = '<span class="slots-empty">No times available right now — email john@clearbounddigital.com or call 602-999-6990 to schedule.</span>';
+    return;
+  }
+
+  slotsGrid.innerHTML = '';
+  data.forEach(slot => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'slot-pill';
+    btn.textContent = toMST(slot.slot_datetime);
+    btn.dataset.id = slot.id;
+    btn.addEventListener('click', () => {
+      slotsGrid.querySelectorAll('.slot-pill').forEach(p => p.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedSlot = slot;
+      document.getElementById('slot-error').classList.remove('show');
+    });
+    slotsGrid.appendChild(btn);
+  });
+}
+
+// ── Form submission ───────────────────────
+function showErr(id, show) { document.getElementById(id).classList.toggle('show', show); }
+
+document.getElementById('booking-form').addEventListener('submit', async e => {
+  e.preventDefault();
+
+  const name     = document.getElementById('bf-name').value.trim();
+  const phone    = document.getElementById('bf-phone').value.trim();
+  const email    = document.getElementById('bf-email').value.trim();
+  const industry = document.getElementById('bf-industry').value;
+  const needs    = document.getElementById('bf-needs').value.trim();
+  const emailOk  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  let ok = true;
+  if (!selectedSlot)  { document.getElementById('slot-error').classList.add('show'); ok = false; }
+  showErr('err-name',     !name);     if (!name)    ok = false;
+  showErr('err-phone',    !phone);    if (!phone)   ok = false;
+  showErr('err-email',    !emailOk);  if (!emailOk) ok = false;
+  showErr('err-industry', !industry); if (!industry) ok = false;
+  showErr('err-needs',    !needs);    if (!needs)   ok = false;
+  if (!ok) return;
+
+  const btn = document.getElementById('booking-btn');
+  btn.disabled = true;
+  btn.textContent = 'Booking…';
+
+  const { error: bookErr } = await sb.from('bookings').insert({
+    full_name: name, phone, email, industry, needs, slot_id: selectedSlot.id
+  });
+
+  if (bookErr) {
+    btn.disabled = false;
+    btn.textContent = 'Confirm Booking →';
+    alert('Something went wrong. Please call 602-999-6990 or email john@clearbounddigital.com.');
+    return;
+  }
+
+  await sb.from('availability_slots').update({ is_booked: true }).eq('id', selectedSlot.id);
+
+  formWrap.hidden = true;
+  successEl.hidden = false;
+});
+</script>
+</body>
+</html>

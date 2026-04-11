@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work | Clearbound Digital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/site.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="/">Clearbound Digital</a>
+  <nav class="site-nav">
+    <a href="/work">Work</a>
+    <a href="/services">Services</a>
+    <a href="/#process">Process</a>
+    <a href="/contact" class="cta-link">Start a Project</a>
+  </nav>
+</header>
+<main class="page">
+  <section class="hero">
+    <div class="eyebrow">Work</div>
+    <h1>Performance-Led Growth Across Industries</h1>
+    <p>Representative engagements showing how integrated strategy, media, creative, web, and automation drive compounding results.</p>
+  </section>
+
+  <section class="section">
+    <h2>Featured Results</h2>
+    <div class="grid grid-3">
+      <article class="card">
+        <h3>Multi-Location Home Services Brand</h3>
+        <p>Rebuilt lead flow and paid social + search structure with full-funnel reporting.</p>
+        <p class="kpi">+138%</p><p>qualified leads in 120 days</p>
+      </article>
+      <article class="card">
+        <h3>B2B SaaS Platform</h3>
+        <p>Unified lifecycle emails, retargeting, and CRM automation to improve handoff quality.</p>
+        <p class="kpi">-31%</p><p>cost per SQL while increasing volume</p>
+      </article>
+      <article class="card">
+        <h3>eCommerce Consumer Product</h3>
+        <p>Launched a creative testing system and CRO updates across PDP and checkout.</p>
+        <p class="kpi">+64%</p><p>ROAS improvement quarter over quarter</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>What Engagement Includes</h2>
+    <div class="grid grid-3">
+      <article class="card"><h3>Weekly Optimization</h3><p>Performance insights, creative refreshes, and budget adjustments.</p></article>
+      <article class="card"><h3>Transparent Reporting</h3><p>Channel and funnel metrics tied directly to revenue outcomes.</p></article>
+      <article class="card"><h3>Dedicated Strategist</h3><p>Single point of accountability across channels and execution teams.</p></article>
+    </div>
+  </section>
+
+  <section class="cta-band">
+  <h2>Start Your Project</h2>
+  <p>Share a few details and we will follow up with a custom growth plan.</p>
+  <form data-mailto-form>
+    <div class="form-grid">
+      <input type="text" name="name" placeholder="Your name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="text" name="company" placeholder="Company">
+      <button type="submit">Let's Talk</button>
+    </div>
+    <div class="form-grid">
+      <textarea name="message" placeholder="What do you need help with?"></textarea>
+    </div>
+  </form>
+</section>
+<script>
+  document.querySelectorAll('[data-mailto-form]').forEach(function(form) {
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      window.location.href = 'mailto:john@clearbounddigital.com?subject=New%20Project%20Inquiry%20from%20clearbound.digital';
+    });
+  });
+</script>
+  <footer class="footer">
+  <div>
+    <h4>Clearbound Digital</h4>
+    <p>Full-service digital growth for businesses that want to win.</p>
+    <p>john@clearbounddigital.com<br>602-999-6990<br>Phoenix, AZ</p>
+  </div>
+  <div>
+    <h4>Services</h4>
+    <ul>
+      <li><a href="/services/marketing-strategy">Marketing Strategy</a></li>
+      <li><a href="/services/social-media">Social Media</a></li>
+      <li><a href="/services/seo">SEO</a></li>
+      <li><a href="/services/paid-advertising">Paid Ads</a></li>
+      <li><a href="/services/web-design">Web Design</a></li>
+      <li><a href="/services/ai-automation">AI Automation</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4>Company</h4>
+    <ul>
+      <li><a href="/about">About</a></li>
+      <li><a href="/work">Work</a></li>
+      <li><a href="/contact">Contact</a></li>
+      <li><a href="https://www.instagram.com/clearbounddigital" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Clearbound Digital</span>
+    <span>Built for conversion, optimized for growth.</span>
+  </div>
+</footer>
+</main>
+</body>
+</html>
