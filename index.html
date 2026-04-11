@@ -230,14 +230,14 @@ nav.scrolled { background: rgba(11,15,26,.85); backdrop-filter: blur(20px); }
 
 .hero-headline {
   font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: clamp(2.6rem, 6.5vw, 8rem);
-  line-height: .92; letter-spacing: -.025em;
+  font-weight: 400;
+  font-size: clamp(2.8rem, 6.8vw, 8.5rem);
+  line-height: 1.05; letter-spacing: -.01em;
   color: var(--white);
   opacity: 0; animation: slideUp .9s .35s forwards;
 }
 .hero-headline .outline-text {
-  -webkit-text-stroke: 1px rgba(237,232,222,.4);
+  -webkit-text-stroke: 1px rgba(237,232,222,.55);
   color: transparent;
 }
 .hero-headline .cream-word { color: var(--cream); }
@@ -474,25 +474,26 @@ nav.scrolled { background: rgba(11,15,26,.85); backdrop-filter: blur(20px); }
   gap: 48px;
 }
 .proc-top {
-  display: flex; justify-content: space-between; align-items: flex-end;
+  display: flex; flex-direction: column; gap: 16px;
+  max-width: 680px;
 }
 .proc-hed-group {}
 .proc-eyebrow {
   font-family: 'Syne', sans-serif;
   font-size: .52rem; font-weight: 600;
   letter-spacing: .22em; text-transform: uppercase;
-  color: var(--cream2); margin-bottom: 12px;
+  color: var(--cream2); margin-bottom: 10px;
 }
 .proc-hed {
   font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: clamp(2.2rem, 5vw, 5rem);
-  line-height: .88; letter-spacing: -.02em;
+  font-weight: 600;
+  font-size: clamp(2rem, 4.5vw, 4.2rem);
+  line-height: 1.0; letter-spacing: -.02em;
   color: var(--white);
 }
 .proc-note {
-  font-size: .84rem; font-weight: 400; line-height: 1.7;
-  color: var(--dim); max-width: 260px; text-align: right;
+  font-size: .94rem; font-weight: 400; line-height: 1.75;
+  color: var(--dim); max-width: 520px; text-align: left;
 }
 .proc-grid {
   display: grid; grid-template-columns: repeat(3,1fr);
@@ -714,8 +715,7 @@ nav.scrolled { background: rgba(11,15,26,.85); backdrop-filter: blur(20px); }
 ══════════════════════════════════ */
 @media (max-width: 900px) {
   .proc-grid, .results-grid { grid-template-columns: 1fr 1fr !important; }
-  .proc-top { flex-direction: column; gap: 20px; }
-  .proc-note { max-width: 100%; text-align: left; }
+  .proc-note { max-width: 100%; }
   .foot-top { flex-direction: column; gap: 36px; }
   nav { padding: 0 28px; }
   .nav-links { gap: 20px; }
@@ -984,7 +984,7 @@ textarea.booking-field { resize: vertical; min-height: 88px; }
     <a href="#p-statement">About</a>
     <a href="#process">How It Works</a>
     <a href="#p-results">Results</a>
-    <a href="#book" class="open-booking" class="nav-cta">Book a Free Audit</a>
+    <a href="#book" class="open-booking nav-cta">Book a Free Audit</a>
   </div>
 </nav>
 
@@ -1012,7 +1012,7 @@ textarea.booking-field { resize: vertical; min-height: 88px; }
       </h1>
       <p class="hero-body">Clearbound Digital is your full-stack growth partner — not just another agency.</p>
       <div class="hero-actions">
-        <a href="#book" class="open-booking" class="btn-primary">Book a Free Growth Audit</a>
+        <a href="#book" class="open-booking btn-primary">Book a Free Growth Audit</a>
       </div>
     </div>
     <div class="hero-right-accent">
@@ -1125,7 +1125,7 @@ textarea.booking-field { resize: vertical; min-height: 88px; }
         to <span class="outline">Grow</span>?
       </h2>
       <p class="cta-sub">Book a free 30-minute growth audit. No pitch, no pressure. We'll look at what's working, what's not, and tell you exactly what we'd do.</p>
-      <a href="#book" class="open-booking" class="btn-primary" style="display:inline-block; margin-bottom:40px;">Book Your Free Audit</a>
+      <a href="#book" class="open-booking btn-primary" style="display:inline-block; margin-bottom:40px;">Book Your Free Audit</a>
       <p class="cta-sub">john@clearbounddigital.com<br>602-999-6990<br>Phoenix, AZ</p>
     </div>
   </div>
